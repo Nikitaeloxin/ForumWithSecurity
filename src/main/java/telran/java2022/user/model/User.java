@@ -1,6 +1,7 @@
 package telran.java2022.user.model;
 
 import java.io.Serial;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,8 @@ public class User {
 	String login;
 	@Setter
 	String password;
+	@Setter
+	String changePasswordDate = LocalDateTime.now().toString();
 	@Setter
 	String firstName;
 	@Setter

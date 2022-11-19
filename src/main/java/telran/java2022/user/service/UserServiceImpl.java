@@ -1,6 +1,8 @@
 package telran.java2022.user.service;
 
 
+import java.time.LocalDateTime;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,6 +33,7 @@ public class UserServiceImpl implements UserService, CommandLineRunner {
 		if (usersRepository.existsById(userRegisterDto.getLogin())) {
 			throw new UserAlreadyExistException(userRegisterDto.getLogin());
 		}
+		userRegisterDto.setChangePasswordDate(LocalDateTime.now().toString());
 		User user = modelMapper.map(userRegisterDto, User.class);
 		String password = passwordEncoder.encode(user.getPassword());
 		user.setPassword(password);
@@ -85,6 +88,7 @@ public class UserServiceImpl implements UserService, CommandLineRunner {
 		User user = usersRepository.findById(login).orElseThrow(() -> new UserNotFoundException(newPassword));
 		String password = passwordEncoder.encode(newPassword);
 		user.setPassword(password);
+		user.setChangePasswordDate(LocalDateTime.now().toString());
 		usersRepository.save(user);
 	}
 

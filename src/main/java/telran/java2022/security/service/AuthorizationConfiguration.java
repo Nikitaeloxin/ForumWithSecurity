@@ -18,8 +18,11 @@ public class AuthorizationConfiguration {
 		http.csrf().disable();
 		http.sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		http.authorizeRequests(authorize -> authorize	
+		http.authorizeRequests(authorize -> authorize
+				
 			.mvcMatchers("/account/register/**","/forum/posts/**").permitAll()
+			.mvcMatchers(HttpMethod.PUT,"/account/password/**").authenticated()
+			.mvcMatchers("/account/**","/forum/**").access("@customWebSecurity.checkPasswordRelevance(authentication.name) == true")
 			.mvcMatchers("/account/user/{login}/role/{role}/**").hasRole("ADMINISTRATOR")
 			.mvcMatchers(HttpMethod.PUT,"/account/user/{login}/**").access("#login == authentication.name")
 			.mvcMatchers(HttpMethod.DELETE,"/account/user/{login}/**").access("#login.equals(principal.getUsername()) or hasRole('ADMINISTRATOR')")
@@ -27,7 +30,7 @@ public class AuthorizationConfiguration {
 			.mvcMatchers(HttpMethod.PUT,"/forum/post/{id}/comment/{author}/**").access("#author == authentication.name")
 			.mvcMatchers(HttpMethod.PUT,"/forum/post/{id}/like/**").authenticated()
 			.mvcMatchers(HttpMethod.PUT,"/forum/post/{id}/**").access("@customWebSecurity.checkPostAuthor(#id,authentication.name) == true")
-			.mvcMatchers(HttpMethod.DELETE,"/forum/post/{id}/**").access("@customWebSecurity.checkPostAuthor(#id,authentication.name) == true or hasRole('MODERATOR')")
+			.mvcMatchers(HttpMethod.DELETE,"/forum/post/{id}/**").access("@customWebSecurity.checkPostAuthor(#id,authentication.name) == true or hasRole('MODERATOR')")	
 			.anyRequest().authenticated());
 		return http.build();
 						
